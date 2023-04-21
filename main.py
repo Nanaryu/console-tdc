@@ -46,7 +46,7 @@ room2 = [
     [w, w, w, w, w, x, x, x, x, x, w, w, w, w, w]
 ]
 
-current_room = room1
+c_room = room1
 
 def show_room(room):
     for row in room:
@@ -59,23 +59,39 @@ def load_room(room):
     return current_room
 
 def move_handle(room):
+    '''
     if msvcrt.kbhit():
         key = msvcrt.getch() 
         if key == b'w': 
             for row in room:
                 for element in row:
                     if element == p:
-                        if room[room.index(row) - 1][row.index(element)] == x:
-                            return 'room2'
+                        if room.index(row) - 1 == 0:
+                            load_room(2)
                         else:
                             room[room.index(row) - 1][row.index(element)] = p
                             row[row.index(p)] = e
                     else:
                         pass
+    '''
+    pass
 
 while True: 
-    move_handle(current_room)
-    show_room(current_room)
+    move_handle(c_room)
+    if msvcrt.kbhit():
+        key = msvcrt.getch() 
+        if key == b'w': 
+            for row in c_room:
+                for element in row:
+                    if element == p:
+                        if c_room.index(row) - 1 == 0:
+                            load_room(room2)
+                        else:
+                            c_room[c_room.index(row) - 1][row.index(element)] = p
+                            row[row.index(p)] = e
+                    else:
+                        pass
+    show_room(c_room)
     sleep(0.1)
     system('cls')
     

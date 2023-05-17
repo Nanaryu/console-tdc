@@ -1,82 +1,36 @@
 from os import system
 import msvcrt
 from time import sleep
-import colorama
-from colorama import Fore
+from console_utils import colorize, slowprint
 from secrets import randbelow
+from display import Display, Game
 
-colorama.init()
 
-w = Fore.BLACK + "■ "
-p = Fore.CYAN + "■ "
+
+w = colorize("██", '#000')
+p = colorize("██", '#00f')
 e = "  "
-x = Fore.GREEN + "■ "
-v = Fore.RED + "■ " 
+x = colorize("██", '#0f0')
+v = colorize("██", '#f00')
 
-room1 = [
-    [w, w, w, w, w, x, x, x, x, x, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w]
-]
+display = Display()
+game = Game()
 
-room2 = [
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, x, x, x, x, x, w, w, w, w, w]
-]
-
-roomlist = [room1, room2]
-
-c_room = roomlist[0]
+c_room = display.roomlist[0]
 p_cpos = (7, 7)
+
 px = p_cpos[0]
 py = p_cpos[1]
-
-def show_room(room):
-    for row in room:
-        for x in row:
-            print(x, end='')
-        print("")
-
-def reset(room):
-    global e
-    global v
-    for row in room:
-        for element in row:
-            if element == p or element == v:
-                room[room.index(row)][row.index(element)] = e
-    room[7][7] = p
 
 def game_handler(room):
     global c_room
     global px
     global py
-    global v
-    global e
+    reset = game.reset
+    spawn_enemies = game.spawn_enemies
+    show_room = display.refresh
+    roomlist = display.roomlist
+
     if msvcrt.kbhit():
         key = msvcrt.getch() 
         if key == b'w':
@@ -134,6 +88,7 @@ def game_handler(room):
                     py = 7
                 system('cls')
                 show_room(c_room)
+
         for row in c_room:
             for element in row:
                 if element == v:
@@ -144,20 +99,9 @@ def game_handler(room):
                         room[room.index(row)][row.index(element)] = e
                         room[room.index(row)][row.index(element) - 1] = v
 
-def spawn_enemies(room):
-    global e
-    global v
-    for row in room:
-        for element in row:
-            if element == e:
-                if randbelow(50) == 0:
-                    room[room.index(row)][row.index(element)] = v
-                else:
-                    pass
-
 
 c_room[px][py] = p
-show_room(c_room)
+display.refresh(c_room)
 
 while True: 
     game_handler(c_room)

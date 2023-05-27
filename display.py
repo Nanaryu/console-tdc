@@ -1,129 +1,54 @@
 from console_utils import colorize, slowprint
 from secrets import randbelow
 from random import shuffle
-import msvcrt
 from os import system
 
+hori = colorize("═", '#adff09')
+vert = colorize("║", '#adff09')
+veri = colorize("╔", '#adff09')
+hodo = colorize("╗", '#adff09')
+doho = colorize("╝", '#adff09')
+hove = colorize("╚", '#adff09')
+
+def draw_box(text, color="#adff09", selected=False):
+    print(veri + (hori*len(text)) + hodo)
+    if selected == False:
+        print(vert + colorize(text, color) + vert)
+    else:
+        print(vert + colorize(text, '#ffad09') + vert)
+    print(hove + (hori*len(text)) + doho)
+
+def draw_box2(text, text2, color="#adff09", selected=1):
+    print(veri + (hori*len(text)) + hodo + "   " + veri + (hori*len(text2)) + hodo)
+    if selected==1:
+        print(vert + colorize(text,'#ffad09') + vert + "   " + vert + colorize(text2, color) + vert)
+    elif selected==2:
+        print(vert + colorize(text, color) + vert + "   " + vert + colorize(text2, '#ffad09') + vert)
+    print(hove + (hori*len(text)) + doho + "   " + hove + (hori*len(text2)) + doho)
+
+def draw_box_for_stats(text, length, text2, length2):
+    if len(length) >= len(length2):
+        print(veri + (hori*(len(length)+2)) + hodo)
+        print(vert + colorize(text, '#ffffff') + vert)
+        print(vert + colorize(text2, '#ffffff') + vert)
+        print(hove + (hori*(len(length)+2)) + doho)
+    else:
+        print(veri + (hori*(len(length2)+2)) + hodo)
+        print(vert + colorize(text, '#ffffff') + vert)
+        print(vert + colorize(text2, '#ffffff') + vert)
+        print(hove + (hori*(len(length2)+2)) + doho)
 
 
-class Display:
+def attack(combatpower, edefense, ehealth):
+    return (ehealth - (combatpower//6-edefense//4))
+def defend(defense, health):
+    return (defense + (defense//8))
 
-    w = colorize("██", '#000')
-    p = colorize("██", '#00f')
-    e = "  "
-    x = colorize("██", '#0f0')
-    v = colorize("██", '#f00')
+def display(pokemon1, pokemon2, defense, combatpower, health, edefense, ecombatpower, ehealth, start=False, selected=1):
+    system('cls')
+    if start:
+        draw_box(f'  A wild {pokemon2} appeared!  ', "#00ad00")
+    draw_box_for_stats(f'  {colorize(pokemon1, "#00af00")}  Defense: {colorize(defense, "#3d9eff")}  Combat Power: {colorize(combatpower, "#ff3d3d")}  Health: {colorize(health, "#00af00")}  ',"  " + str(pokemon1) +  ":  Defense: " + str(defense) + " Combat Power: " + str(combatpower) + " Health: " + str(health) + "  ", f'  {colorize(pokemon2, "#ff3d3d")}:  Defense: {colorize(edefense, "#3d9eff")}  Combat Power: {colorize(ecombatpower, "#ff3d3d")}  Health: {colorize(ehealth, "#00af00")}  ',"  " + str(pokemon2) + ":  Defense: " + str(edefense) + " Combat Power: " + str(ecombatpower) + " Health: " + str(ehealth) + "  ")
+    draw_box2("  Attack  ", "  Defend  ", "#adff09", selected)
 
-    def __init__(self):
-        self.w = colorize("██", '#000')
-        self.p = colorize("██", '#00f')
-        self.e = "  "
-        self.x = colorize("██", '#0f0')
-        self.v = colorize("██", '#f00')
 
-    def create_table(self, char):
-        display = []
-        for _ in range(25):
-            dist = []
-            for _ in range(49):
-                dist.append(char)
-            display.append(dist)
-        return display
-
-    def refresh(self, display):
-        for row in display:
-            for cell in row:
-                print(cell, end="")
-            print("")
-
-    def generate_room(self):
-        w = self.w
-        p = self.p
-        e = self.e
-        x = self.x
-        v = self.v
-        room = []
-        while len(room) != 15:
-            row = []
-            while len(row) != 15:
-                r = randbelow(50)
-                if len(room) == 0 or len(room) == 14:
-                    if r == 0:
-                        row.append([w, w, w, w, w, w, w, w, w, x, x, x, x, w])
-                    elif r == 25:
-                        row.append([w, x, x, x, x, w, w, w, w, w, w, w, w, w])
-                    else:
-                        row.append([w, w, w, w, w, x, x, x, x, w, w, w, w, w])
-                else:
-                    c = [e, w, v]
-                    shuffle(c)
-                    row.append([c[0], c[1], c[2], c[1], c[0], c[0], c[2], c[2], c[0], c[0], c[1], c[0], c[1], c[0]])    
-            room.append(row)
-        return room
-
-    room1 = [
-    [w, w, w, w, w, x, x, x, x, x, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w]]
-    room2 = [
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [w, w, w, w, w, w, w, w, w, w, w, w, w, w, w],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [x, e, e, e, e, e, e, e, e, e, e, e, e, e, x],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, e, e, e, e, e, w, w, w, w, w],
-    [w, w, w, w, w, x, x, x, x, x, w, w, w, w, w]]
-
-    roomlist = [room1, room2]
-
-class Game:
-    def __init__(self):
-        self.w = colorize("██", '#000')
-        self.p = colorize("██", '#00f')
-        self.e = "  "
-        self.x = colorize("██", '#0f0')
-        self.v = colorize("██", '#f00')
-
-    def reset(self, room):
-        p = self.p
-        v = self.v
-        e = self.e
-        for row in room:
-            for element in row:
-                if element == p or element == v:
-                    room[room.index(row)][row.index(element)] = e
-        room[7][7] = p
-        return room
-
-    
-
-    def spawn_enemies(self, room):
-        e = self.e
-        v = self.v
-        for row in room:
-            for element in row:
-                if element == e:
-                    if randbelow(50) == 0:
-                        room[room.index(row)][row.index(element)] = v
-                    else:
-                        pass

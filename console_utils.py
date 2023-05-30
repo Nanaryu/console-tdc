@@ -84,7 +84,7 @@ def colorize(text, fg_color, bg_color=None):
     if bg_color == None:
         bg_style = ""
     else:
-        if not isinstance(fg_color, Color):
+        if not isinstance(bg_color, Color):
             bg_color = Color(bg_color)
         bg_style = f"\033[48;2;{';'.join(str(val) for val in bg_color.get_rgb())}m"
 
